@@ -11,7 +11,7 @@ function InsightCard() {
   const fetchInsights = async () => {
     try {
       const res = await API.get("/expenses/insights");
-      setInsight(res.data.insights);
+      setInsight(res.data.data.insights); // ✅ important fix
     } catch (error) {
       setInsight("Could not load insights.");
     }

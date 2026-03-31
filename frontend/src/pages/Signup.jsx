@@ -21,8 +21,8 @@ function Signup() {
     setError("");
 
     try {
-      await API.post("/auth/signup", form);
-      navigate("/");
+      await API.post("/auth/signup", form); //  FIXED
+      navigate("/"); // go to login
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
     }
@@ -30,7 +30,7 @@ function Signup() {
 
   return (
     <div className="auth-container">
-      <form className="auth-card" onSubmit={handleSubmit}>
+      <form className="auth-card" onSubmit={handleSubmit} autoComplete="off">
         <h2>Signup</h2>
 
         <input
@@ -65,7 +65,7 @@ function Signup() {
         <button type="submit">Signup</button>
 
         <p>
-          Already have an account? <Link to="/">Login</Link>
+          Already have an account? <Link to="/">Login</Link> {/*  FIXED */}
         </p>
       </form>
     </div>

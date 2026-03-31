@@ -5,7 +5,15 @@ const generateInsights = require("../utils/aiInsights");
 // ADD EXPENSE
 exports.addExpense = async (req, res) => {
   try {
-    const { title, amount } = req.body;
+    const { title, amount, date } = req.body;
+
+    if (!title || !amount) {
+      return res.status(400).json({
+        success: false,
+        message: "Title and amount are required",
+        data: null,
+      });
+    }
 
     const category = await getCategory(title);
 
@@ -14,25 +22,43 @@ exports.addExpense = async (req, res) => {
       title,
       amount,
       category,
+      date: date || Date.now(), 
     });
 
     await expense.save();
 
-    res.status(201).json(expense);
+    res.status(201).json({
+      success: true,
+      message: "Expense added successfully",
+      data: expense,
+    });
   } catch (error) {
     console.log("ADD EXPENSE ERROR:", error.message);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      data: null,
+    });
   }
 };
 
 // GET EXPENSES
 exports.getExpenses = async (req, res) => {
   try {
-    const expenses = await Expense.find({ user: req.user.id });
-    res.json(expenses);
+    const expenses = await Expense.find({ user: req.user.id }).sort({ date: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: "Expenses fetched successfully",
+      data: expenses,
+    });
   } catch (error) {
     console.log("GET EXPENSES ERROR:", error.message);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      data: null,
+    });
   }
 };
 
@@ -48,13 +74,25 @@ exports.updateExpense = async (req, res) => {
     );
 
     if (!updatedExpense) {
-      return res.status(404).json({ message: "Expense not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Expense not found",
+        data: null,
+      });
     }
 
-    res.json(updatedExpense);
+    res.status(200).json({
+      success: true,
+      message: "Expense updated successfully",
+      data: updatedExpense,
+    });
   } catch (error) {
     console.log("UPDATE EXPENSE ERROR:", error.message);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      data: null,
+    });
   }
 };
 
@@ -67,13 +105,25 @@ exports.deleteExpense = async (req, res) => {
     });
 
     if (!deletedExpense) {
-      return res.status(404).json({ message: "Expense not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Expense not found",
+        data: null,
+      });
     }
 
-    res.json({ message: "Expense deleted successfully" });
+    res.status(200).json({
+      success: true,
+      message: "Expense deleted successfully",
+      data: deletedExpense,
+    });
   } catch (error) {
     console.log("DELETE EXPENSE ERROR:", error.message);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      data: null,
+    });
   }
 };
 
@@ -81,15 +131,21 @@ exports.deleteExpense = async (req, res) => {
 exports.getInsights = async (req, res) => {
   try {
     const expenses = await Expense.find({ user: req.user.id });
-
     const insights = await generateInsights(expenses);
 
-    res.json({ insights });
+    res.status(200).json({
+      success: true,
+      message: "Insights fetched successfully",
+      data: {
+        insights,
+      },
+    });
   } catch (error) {
     console.log("GET INSIGHTS ERROR:", error.message);
     res.status(500).json({
+      success: false,
       message: "Error generating insights",
-      error: error.message,
+      data: null,
     });
   }
 };

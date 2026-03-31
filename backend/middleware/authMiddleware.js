@@ -4,7 +4,11 @@ const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Token not found" });
+    return res.status(401).json({
+      success: false,
+      message: "Token not found",
+      data: null,
+    });
   }
 
   const token = authHeader.split(" ")[1];
@@ -14,7 +18,11 @@ const authMiddleware = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({
+      success: false,
+      message: "Invalid token",
+      data: null,
+    });
   }
 };
 

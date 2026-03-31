@@ -21,7 +21,10 @@ function Login() {
 
     try {
       const res = await API.post("/auth/login", form);
-      localStorage.setItem("token", res.data.token);
+
+      localStorage.setItem("token", res.data.data.token);
+      localStorage.setItem("user",JSON.stringify(res.data.data.user));
+      
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
@@ -30,7 +33,7 @@ function Login() {
 
   return (
     <div className="auth-container">
-      <form className="auth-card" onSubmit={handleSubmit}>
+      <form className="auth-card" onSubmit={handleSubmit} autoComplete="off">
         <h2>Login</h2>
 
         <input

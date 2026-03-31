@@ -83,9 +83,20 @@ select {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #111827;
-  color: white;
+  background: #EBF7E3;
+  color: black;
   padding: 16px 32px;
+}
+
+.navbar-right{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-name{
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .navbar button {
@@ -150,4 +161,47 @@ select {
 .expense-item button {
   margin-left: 12px;
   background: #ef4444;
+}
+.card p {
+  color: #555;
+}
+
+.reminder-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.reminder-item h4 {
+  margin-bottom: 4px;
+}
+
+.reminder-item p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.reminder-badge {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.expense-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.expense-controls input,
+.expense-controls select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
 }
