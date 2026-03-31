@@ -5,7 +5,7 @@ const generateInsights = require("../utils/aiInsights");
 // ADD EXPENSE
 exports.addExpense = async (req, res) => {
   try {
-    const { title, amount, date } = req.body;
+    const { title, amount, date, category } = req.body;
 
     if (!title || !amount) {
       return res.status(400).json({
@@ -15,14 +15,12 @@ exports.addExpense = async (req, res) => {
       });
     }
 
-    const category = await getCategory(title);
-
     const expense = new Expense({
       user: req.user.id,
       title,
       amount,
-      category,
-      date: date || Date.now(), 
+      category: category || "Other",
+      date: date || Date.now(),
     });
 
     await expense.save();
