@@ -11,10 +11,13 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+
+
 connectDB()
 
 app.use("/api/auth", require("./routes/authRoutes"))
 app.use("/api/expenses", expenseRoutes)
+app.use("/api/chat", require("./routes/chatRoutes"));
 
 app.get("/", (req,res)=>{
   res.send("Expense Tracker Backend Running")

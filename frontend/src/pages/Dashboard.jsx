@@ -5,6 +5,7 @@ import ExpenseList from "../components/ExpenseList";
 import InsightCard from "../components/InsightCard";
 import ExpenseChart from "../components/ExpenseChart";
 import ReminderCard from "../components/ReminderCard";
+import Chatbot from "../components/Chatbot";
 
 function Dashboard() {
   const [reminders, setReminders] = useState([
@@ -26,7 +27,7 @@ function Dashboard() {
       <div className="dashboard-container">
         <div className="left-panel">
           <ExpenseForm onReminderAdd={handleReminderAdd} />
-          <InsightCard />
+          <Chatbot />
           <ReminderCard reminders={reminders} />
         </div>
 
