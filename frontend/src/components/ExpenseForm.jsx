@@ -1,45 +1,62 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import API from "../services/api";
 
-function ExpenseForm({ onAdd, onReminderAdd }) {
+function ExpenseForm({ onAdd, onReminderAdd, editingExpense, onUpdate }) {
   const [form, setForm] = useState({
     title: "",
     amount: "",
     date: "",
     category: "",
+    type: "Debit",
     setReminder: false,
   });
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const titleCategoryMap = {
-    "Rapido Ride": "Travel",
-    "Uber Ride": "Travel",
-    "Electricity Bill": "Bills",
-    "WiFi Recharge": "Bills",
-    "House Rent": "Bills",
-    "Groceries": "Food",
-    "Restaurant Food": "Food",
-    "Netflix Subscription": "Entertainment",
-    "Mobile Recharge": "Bills",
-    "Shopping": "Shopping",
-    "Salary": "Income",
+  const titleMap = {
+    "Rapido Ride": { category: "Travel", type: "Debit" },
+    "Uber Ride": { category: "Travel", type: "Debit" },
+    "Electricity Bill": { category: "Bills", type: "Debit" },
+    "WiFi Recharge": { category: "Bills", type: "Debit" },
+    "House Rent": { category: "Bills", type: "Debit" },
+    Groceries: { category: "Food", type: "Debit" },
+    "Restaurant Food": { category: "Food", type: "Debit" },
+    "Netflix Subscription": { category: "Entertainment", type: "Debit" },
+    "Mobile Recharge": { category: "Bills", type: "Debit" },
+    Shopping: { category: "Shopping", type: "Debit" },
+    Salary: { category: "Income", type: "Credit" },
   };
 
-  const titleOptions = Object.keys(titleCategoryMap);
+  const titleOptions = Object.keys(titleMap);
+
+  useEffect(() => {
+    if (editingExpense) {
+      setForm({
+        title: editingExpense.title || "",
+        amount: editingExpense.amount || "",
+        date: editingExpense.date
+          ? new Date(editingExpense.date).toISOString().split("T")[0]
+          : "",
+        category: editingExpense.category || "",
+        type: editingExpense.type || "Debit",
+        setReminder: false,
+      });
+    }
+  }, [editingExpense]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
     if (name === "title") {
-      const selectedCategory = titleCategoryMap[value] || "Other";
+      const selected = titleMap[value] || { category: "Other", type: "Debit" };
 
       setForm({
         ...form,
         title: value,
-        category: selectedCategory,
-        setReminder: selectedCategory === "Bills" ? form.setReminder : false,
+        category: selected.category,
+        type: selected.type,
+        setReminder: selected.category === "Bills" ? form.setReminder : false,
       });
     } else if (type === "checkbox") {
       setForm({
@@ -60,44 +77,63 @@ function ExpenseForm({ onAdd, onReminderAdd }) {
     setSuccess("");
 
     try {
-      const res = await API.post("/expenses", {
-        title: form.title,
-        amount: Number(form.amount),
-        date: form.date || undefined,
-        category: form.category,
-      });
+      let res;
 
-      if (onAdd) {
-        onAdd(res.data.data);
-      }
-
-      if (form.category === "Bills" && form.setReminder && onReminderAdd) {
-        onReminderAdd({
-          id: Date.now(),
+      if (editingExpense) {
+        res = await API.put(`/expenses/${editingExpense._id}`, {
           title: form.title,
-          dueDate: form.date,
-          status: "Due Soon",
+          amount: Number(form.amount),
+          date: form.date || undefined,
+          category: form.category,
+          type: form.type,
         });
-      }
 
-      setSuccess("Expense added successfully");
+        if (onUpdate) {
+          onUpdate(res.data.data);
+        }
+
+        setSuccess("Expense updated successfully");
+      } else {
+        res = await API.post("/expenses", {
+          title: form.title,
+          amount: Number(form.amount),
+          date: form.date || undefined,
+          category: form.category,
+          type: form.type,
+        });
+
+        if (onAdd) {
+          onAdd(res.data.data);
+        }
+
+        if (form.category === "Bills" && form.setReminder && onReminderAdd) {
+          onReminderAdd({
+            id: Date.now(),
+            title: form.title,
+            dueDate: form.date,
+          });
+        }
+
+        setSuccess("Expense added successfully");
+      }
 
       setForm({
         title: "",
         amount: "",
         date: "",
         category: "",
+        type: "Debit",
         setReminder: false,
       });
     } catch (error) {
-      console.log("Add expense failed:", error.response?.data || error.message);
-      setError(error.response?.data?.message || "Add expense failed");
+      console.log("Expense submit failed:", error.response?.data || error.message);
+      setError(error.response?.data?.message || "Expense action failed");
     }
   };
 
   return (
     <div className="card">
-      <h3>Add Expense</h3>
+      <h3>{editingExpense ? "Edit Entry" : "Add Entry"}</h3>
 
       <form onSubmit={handleSubmit}>
         <select
@@ -123,6 +159,14 @@ function ExpenseForm({ onAdd, onReminderAdd }) {
         />
 
         <input
+          type="text"
+          name="type"
+          value={form.type}
+          placeholder="Type"
+          readOnly
+        />
+
+        <input
           type="number"
           name="amount"
           placeholder="Amount"
@@ -139,7 +183,7 @@ function ExpenseForm({ onAdd, onReminderAdd }) {
           required
         />
 
-        {form.category === "Bills" && (
+        {form.category === "Bills" && !editingExpense && (
           <label className="reminder-checkbox">
             <input
               type="checkbox"
@@ -152,13 +196,11 @@ function ExpenseForm({ onAdd, onReminderAdd }) {
         )}
 
         {error && <p className="error">{error}</p>}
-        {success && (
-          <p style={{ color: "green", marginBottom: "10px" }}>
-            {success}
-          </p>
-        )}
+        {success && <p style={{ color: "green", marginBottom: "10px" }}>{success}</p>}
 
-        <button type="submit">Add Expense</button>
+        <button type="submit">
+          {editingExpense ? "Update Entry" : "Add Entry"}
+        </button>
       </form>
     </div>
   );

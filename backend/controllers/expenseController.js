@@ -5,7 +5,7 @@ const generateInsights = require("../utils/aiInsights");
 // ADD EXPENSE
 exports.addExpense = async (req, res) => {
   try {
-    const { title, amount, date, category } = req.body;
+    const { title, amount, date, category, type } = req.body;
 
     if (!title || !amount) {
       return res.status(400).json({
@@ -20,6 +20,7 @@ exports.addExpense = async (req, res) => {
       title,
       amount,
       category: category || "Other",
+      type: type || "Debit",
       date: date || Date.now(),
     });
 
@@ -27,7 +28,7 @@ exports.addExpense = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Expense added successfully",
+      message: "Entry added successfully",
       data: expense,
     });
   } catch (error) {
@@ -63,11 +64,11 @@ exports.getExpenses = async (req, res) => {
 // UPDATE EXPENSE
 exports.updateExpense = async (req, res) => {
   try {
-    const { title, amount, category } = req.body;
+    const { title, amount, category, type, date } = req.body;
 
     const updatedExpense = await Expense.findOneAndUpdate(
       { _id: req.params.id, user: req.user.id },
-      { title, amount, category },
+      { title, amount, category, type, date },
       { new: true }
     );
 
@@ -93,6 +94,7 @@ exports.updateExpense = async (req, res) => {
     });
   }
 };
+
 
 // DELETE EXPENSE
 exports.deleteExpense = async (req, res) => {

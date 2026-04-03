@@ -5,7 +5,7 @@ function Chatbot() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      text: "Hi 👋 I’m your Finance Assistant. Ask me anything about your expenses.",
+      text: "Hi! I am your assistant. How can I help you with your expenses today? You can ask about total spending, highest category, recent expenses, and savings suggestions.",
     },
   ]);
 
@@ -42,7 +42,7 @@ function Chatbot() {
         ...prev,
         {
           role: "assistant",
-          text: "⚠️ Sorry, something went wrong.",
+          text: "Sorry, something went wrong.",
         },
       ]);
     }
@@ -51,8 +51,8 @@ function Chatbot() {
   };
 
   return (
-    <div className="card chatbot-card">
-      <h3>💬 Finance Assistant</h3>
+    <div className="card chatbot-card ">
+      <h3>Chat Support</h3>
 
       <div className="chat-window">
         {messages.map((msg, index) => (

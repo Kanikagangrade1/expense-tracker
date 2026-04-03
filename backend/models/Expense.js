@@ -18,6 +18,13 @@ const expenseSchema = new mongoose.Schema(
       type: String,
       default: "Other",
     },
+    type:{
+      type: String,
+      enum: ["Credit", "Debit"],
+      default: "Debit",
+      required: true,
+    },
+
     date: {
       type: Date,
       default: Date.now, 

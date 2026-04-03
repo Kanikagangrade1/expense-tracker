@@ -23,11 +23,17 @@ function Login() {
       const res = await API.post("/auth/login", form);
 
       localStorage.setItem("token", res.data.data.token);
-      localStorage.setItem("user",JSON.stringify(res.data.data.user));
-      
+      localStorage.setItem("user", JSON.stringify(res.data.data.user));
+
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      if (err.code === "ERR_NETWORK") {
+        setError("Network error. Check backend server or internet connection.");
+      } else {
+        setError(err.response?.data?.message || "Login failed");
+      }
+
+      console.log("LOGIN ERROR:", err);
     }
   };
 

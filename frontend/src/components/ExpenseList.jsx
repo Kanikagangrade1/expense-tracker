@@ -1,31 +1,33 @@
 import { useEffect, useMemo, useState } from "react";
 import API from "../services/api";
 
-function ExpenseList() {
-  const [expenses, setExpenses] = useState([]);
+function ExpenseList({ expenses, onEdit, onDelete }) {
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
   const [dateFilter, setDateFilter] = useState("All");
-
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
 
   const fetchExpenses = async () => {
     try {
       const res = await API.get("/expenses");
       setExpenses(res.data.data);
-    } catch (error) {
-      console.log("Error fetching expenses", error);
+      setError("");
+    } catch (err) {
+      setError("");
+      console.log(err);
     }
   };
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
 
   const handleDelete = async (id) => {
     try {
       await API.delete(`/expenses/${id}`);
-      fetchExpenses();
-    } catch (error) {
-      console.log("Delete failed", error);
+      setExpenses((prev) => prev.filter((item) => item._id !== id));
+    } catch (err) {
+      console.log("Delete failed", err);
     }
   };
 
@@ -45,9 +47,11 @@ function ExpenseList() {
     const d = new Date(date);
 
     const firstDayOfWeek = new Date(today);
+    firstDayOfWeek.setHours(0, 0, 0, 0);
     firstDayOfWeek.setDate(today.getDate() - today.getDay());
 
     const lastDayOfWeek = new Date(firstDayOfWeek);
+    lastDayOfWeek.setHours(23, 59, 59, 999);
     lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
 
     return d >= firstDayOfWeek && d <= lastDayOfWeek;
@@ -64,22 +68,22 @@ function ExpenseList() {
   };
 
   const filteredExpenses = useMemo(() => {
-    return expenses.filter((expense) => {
-      const matchesSearch = expense.title
+    return expenses.filter((item) => {
+      const matchesSearch = item.title
         .toLowerCase()
         .includes(search.toLowerCase());
 
       const matchesCategory =
-        filterCategory === "All" || expense.category === filterCategory;
+        filterCategory === "All" || item.category === filterCategory;
 
       let matchesDate = true;
 
       if (dateFilter === "Today") {
-        matchesDate = isToday(expense.date);
+        matchesDate = isToday(item.date);
       } else if (dateFilter === "This Week") {
-        matchesDate = isThisWeek(expense.date);
+        matchesDate = isThisWeek(item.date);
       } else if (dateFilter === "This Month") {
-        matchesDate = isThisMonth(expense.date);
+        matchesDate = isThisMonth(item.date);
       }
 
       return matchesSearch && matchesCategory && matchesDate;
@@ -88,7 +92,7 @@ function ExpenseList() {
 
   return (
     <div className="card">
-      <h3>Expense History</h3>
+      <h3>Expense Table</h3>
 
       <div className="expense-controls">
         <input
@@ -105,10 +109,10 @@ function ExpenseList() {
           <option value="All">All</option>
           <option value="Food">Food</option>
           <option value="Travel">Travel</option>
-          <option value="Shopping">Shopping</option>
           <option value="Bills">Bills</option>
+          <option value="Shopping">Shopping</option>
           <option value="Entertainment">Entertainment</option>
-          <option value="Health">Health</option>
+          <option value="Income">Income</option>
           <option value="Other">Other</option>
         </select>
 
@@ -123,23 +127,74 @@ function ExpenseList() {
         </select>
       </div>
 
-      {filteredExpenses.length === 0 ? (
-        <p>No expenses found.</p>
-      ) : (
-        filteredExpenses.map((expense) => (
-          <div className="expense-item" key={expense._id}>
-            <div>
-              <h4>{expense.title}</h4>
-              <p>{expense.category}</p>
-              <p>{new Date(expense.date).toLocaleDateString()}</p>
-            </div>
+      {error && <p className="error">{error}</p>}
 
-            <div>
-              <strong>₹{expense.amount}</strong>
-              <button onClick={() => handleDelete(expense._id)}>Delete</button>
-            </div>
-          </div>
-        ))
+      {filteredExpenses.length === 0 ? (
+        <p>No expenses found</p>
+      ) : (
+        <div className="table-wrapper">
+          <table className="expense-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {filteredExpenses.map((item, index) => (
+                <tr
+                  key={item._id}
+                  className="table-row-animate"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  <td>{item.title}</td>
+                  <td>
+                    <span className={`table-badge ${item.category?.toLowerCase()}`}>
+                      {item.category}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`type-badge ${item.type?.toLowerCase()}`}>
+                      {item.type}
+                    </span>
+                  </td>
+                  <td className="amount-cell">₹{item.amount}</td>
+                  <td>{new Date(item.date).toLocaleDateString()}</td>
+                  <td>
+                    <div className="table-actions">
+                      {/* <button
+                        className="edit-btn"
+                        onClick={() => onEdit && onEdit(item)}
+                      >
+                        ✏
+                      </button> */}
+
+                      <button
+                        className="delete-btn"
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              "Are you sure you want to delete this expense?"
+                            )
+                          ) {
+                            handleDelete(item._id);
+                          }
+                        }}
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
