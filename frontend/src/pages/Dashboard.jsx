@@ -47,6 +47,7 @@ function Dashboard() {
   };
 
   const handleDeleteExpense = (id) => {
+    console.log("Deleting expense with id:", id);
     setExpenses((prev) => prev.filter((item) => item._id !== id));
   };
 

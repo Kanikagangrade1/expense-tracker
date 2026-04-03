@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import API from "../services/api";
 
 function ExpenseList({ expenses, onEdit, onDelete }) {
@@ -7,27 +7,13 @@ function ExpenseList({ expenses, onEdit, onDelete }) {
   const [filterCategory, setFilterCategory] = useState("All");
   const [dateFilter, setDateFilter] = useState("All");
 
-  const fetchExpenses = async () => {
-    try {
-      const res = await API.get("/expenses");
-      setExpenses(res.data.data);
-      setError("");
-    } catch (err) {
-      setError("");
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
-
   const handleDelete = async (id) => {
     try {
       await API.delete(`/expenses/${id}`);
-      setExpenses((prev) => prev.filter((item) => item._id !== id));
+      onDelete(id);
     } catch (err) {
       console.log("Delete failed", err);
+      setError("Failed to delete expense");
     }
   };
 
@@ -177,11 +163,7 @@ function ExpenseList({ expenses, onEdit, onDelete }) {
                       <button
                         className="delete-btn"
                         onClick={() => {
-                          if (
-                            window.confirm(
-                              "Are you sure you want to delete this expense?"
-                            )
-                          ) {
+                          if (window.confirm("Are you sure you want to delete this expense?")) {
                             handleDelete(item._id);
                           }
                         }}
