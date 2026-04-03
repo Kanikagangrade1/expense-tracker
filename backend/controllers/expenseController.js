@@ -69,7 +69,7 @@ exports.updateExpense = async (req, res) => {
     const updatedExpense = await Expense.findOneAndUpdate(
       { _id: req.params.id, user: req.user.id },
       { title, amount, category, type, date },
-      { new: true }
+      { returnDocument: "after" }
     );
 
     if (!updatedExpense) {

@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import API from "../services/api";
 
-function ExpenseForm({ onAdd, onReminderAdd, editingExpense, onUpdate }) {
+function ExpenseForm({ onAdd, onReminderAdd }) {
   const [form, setForm] = useState({
     title: "",
     amount: "",
@@ -30,44 +30,29 @@ function ExpenseForm({ onAdd, onReminderAdd, editingExpense, onUpdate }) {
 
   const titleOptions = Object.keys(titleMap);
 
-  useEffect(() => {
-    if (editingExpense) {
-      setForm({
-        title: editingExpense.title || "",
-        amount: editingExpense.amount || "",
-        date: editingExpense.date
-          ? new Date(editingExpense.date).toISOString().split("T")[0]
-          : "",
-        category: editingExpense.category || "",
-        type: editingExpense.type || "Debit",
-        setReminder: false,
-      });
-    }
-  }, [editingExpense]);
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
     if (name === "title") {
       const selected = titleMap[value] || { category: "Other", type: "Debit" };
 
-      setForm({
-        ...form,
+      setForm((prev) => ({
+        ...prev,
         title: value,
         category: selected.category,
         type: selected.type,
-        setReminder: selected.category === "Bills" ? form.setReminder : false,
-      });
+        setReminder: selected.category === "Bills" ? prev.setReminder : false,
+      }));
     } else if (type === "checkbox") {
-      setForm({
-        ...form,
+      setForm((prev) => ({
+        ...prev,
         [name]: checked,
-      });
+      }));
     } else {
-      setForm({
-        ...form,
+      setForm((prev) => ({
+        ...prev,
         [name]: value,
-      });
+      }));
     }
   };
 
@@ -77,45 +62,27 @@ function ExpenseForm({ onAdd, onReminderAdd, editingExpense, onUpdate }) {
     setSuccess("");
 
     try {
-      let res;
+      const res = await API.post("/expenses", {
+        title: form.title,
+        amount: Number(form.amount),
+        date: form.date || undefined,
+        category: form.category,
+        type: form.type,
+      });
 
-      if (editingExpense) {
-        res = await API.put(`/expenses/${editingExpense._id}`, {
-          title: form.title,
-          amount: Number(form.amount),
-          date: form.date || undefined,
-          category: form.category,
-          type: form.type,
-        });
-
-        if (onUpdate) {
-          onUpdate(res.data.data);
-        }
-
-        setSuccess("Expense updated successfully");
-      } else {
-        res = await API.post("/expenses", {
-          title: form.title,
-          amount: Number(form.amount),
-          date: form.date || undefined,
-          category: form.category,
-          type: form.type,
-        });
-
-        if (onAdd) {
-          onAdd(res.data.data);
-        }
-
-        if (form.category === "Bills" && form.setReminder && onReminderAdd) {
-          onReminderAdd({
-            id: Date.now(),
-            title: form.title,
-            dueDate: form.date,
-          });
-        }
-
-        setSuccess("Expense added successfully");
+      if (onAdd) {
+        onAdd(res.data.data);
       }
+
+      if (form.category === "Bills" && form.setReminder && onReminderAdd) {
+        onReminderAdd({
+          id: Date.now(),
+          title: form.title,
+          dueDate: form.date,
+        });
+      }
+
+      setSuccess("Expense added successfully");
 
       setForm({
         title: "",
@@ -127,13 +94,13 @@ function ExpenseForm({ onAdd, onReminderAdd, editingExpense, onUpdate }) {
       });
     } catch (error) {
       console.log("Expense submit failed:", error.response?.data || error.message);
-      setError(error.response?.data?.message || "Expense action failed");
+      setError(error.response?.data?.message || "Expense add failed");
     }
   };
 
   return (
     <div className="card">
-      <h3>{editingExpense ? "Edit Entry" : "Add Entry"}</h3>
+      <h3>Add Entry</h3>
 
       <form onSubmit={handleSubmit}>
         <select
@@ -183,7 +150,7 @@ function ExpenseForm({ onAdd, onReminderAdd, editingExpense, onUpdate }) {
           required
         />
 
-        {form.category === "Bills" && !editingExpense && (
+        {form.category === "Bills" && (
           <label className="reminder-checkbox">
             <input
               type="checkbox"
@@ -198,9 +165,7 @@ function ExpenseForm({ onAdd, onReminderAdd, editingExpense, onUpdate }) {
         {error && <p className="error">{error}</p>}
         {success && <p style={{ color: "green", marginBottom: "10px" }}>{success}</p>}
 
-        <button type="submit">
-          {editingExpense ? "Update Entry" : "Add Entry"}
-        </button>
+        <button type="submit">Add Entry</button>
       </form>
     </div>
   );

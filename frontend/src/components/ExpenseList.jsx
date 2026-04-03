@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import API from "../services/api";
 
-function ExpenseList({ expenses, onEdit, onDelete }) {
+function ExpenseList({ expenses, onDelete }) {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
@@ -10,7 +10,7 @@ function ExpenseList({ expenses, onEdit, onDelete }) {
   const handleDelete = async (id) => {
     try {
       await API.delete(`/expenses/${id}`);
-      onDelete(id);
+      if (onDelete) onDelete(id);
     } catch (err) {
       console.log("Delete failed", err);
       setError("Failed to delete expense");
@@ -153,13 +153,6 @@ function ExpenseList({ expenses, onEdit, onDelete }) {
                   <td>{new Date(item.date).toLocaleDateString()}</td>
                   <td>
                     <div className="table-actions">
-                      {/* <button
-                        className="edit-btn"
-                        onClick={() => onEdit && onEdit(item)}
-                      >
-                        ✏
-                      </button> */}
-
                       <button
                         className="delete-btn"
                         onClick={() => {

@@ -10,8 +10,6 @@ import SummaryCards from "../components/SummaryCards";
 
 function Dashboard() {
   const [expenses, setExpenses] = useState([]);
-  const [editingExpense, setEditingExpense] = useState(null);
-
   const [reminders, setReminders] = useState([
     {
       id: 1,
@@ -37,17 +35,7 @@ function Dashboard() {
     setExpenses((prev) => [newExpense, ...prev]);
   };
 
-  const handleUpdateExpense = (updatedExpense) => {
-    setExpenses((prev) =>
-      prev.map((item) =>
-        item._id === updatedExpense._id ? updatedExpense : item
-      )
-    );
-    setEditingExpense(null);
-  };
-
   const handleDeleteExpense = (id) => {
-    console.log("Deleting expense with id:", id);
     setExpenses((prev) => prev.filter((item) => item._id !== id));
   };
 
@@ -64,8 +52,6 @@ function Dashboard() {
           <ExpenseForm
             onAdd={handleAddExpense}
             onReminderAdd={handleReminderAdd}
-            editingExpense={editingExpense}
-            onUpdate={handleUpdateExpense}
           />
 
           <Chatbot />
@@ -75,12 +61,9 @@ function Dashboard() {
 
         <div className="right-panel">
           <SummaryCards expenses={expenses} />
-
           <ExpenseChart expenses={expenses} />
-
           <ExpenseList
             expenses={expenses}
-            onEdit={setEditingExpense}
             onDelete={handleDeleteExpense}
           />
         </div>
