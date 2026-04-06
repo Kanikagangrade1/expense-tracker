@@ -9,7 +9,7 @@ const app = express()
 
 
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: "https://expense-tracker-ashy-chi-16.vercel.app/",
   credentials: true
 }));
 app.use(express.json())
