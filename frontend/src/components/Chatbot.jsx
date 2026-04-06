@@ -13,16 +13,11 @@ function Chatbot() {
   const [loading, setLoading] = useState(false);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
-    const userMessage = input;
+    const userMessage = input.trim();
 
-    // show user message
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", text: userMessage },
-    ]);
-
+    setMessages((prev) => [...prev, { role: "user", text: userMessage }]);
     setInput("");
     setLoading(true);
 
@@ -31,13 +26,15 @@ function Chatbot() {
         message: userMessage,
       });
 
-      const reply = res.data.data.reply;
+      // console.log("CHAT RESPONSE:", res.data);
+      // console.log("CHAT REPLY:", res.data?.data?.reply);
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", text: reply },
-      ]);
+      const reply = res.data?.data?.reply || "No response received.";
+
+      setMessages((prev) => [...prev, { role: "assistant", text: reply }]);
     } catch (error) {
+      console.log("CHAT ERROR:", error);
+
       setMessages((prev) => [
         ...prev,
         {
@@ -45,13 +42,13 @@ function Chatbot() {
           text: "Sorry, something went wrong.",
         },
       ]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="card chatbot-card ">
+    <div className="card chatbot-card">
       <h3>Chat Support</h3>
 
       <div className="chat-window">
@@ -75,10 +72,14 @@ function Chatbot() {
           placeholder="Ask about your expenses..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSend();
+          }}
         />
 
-        <button onClick={handleSend}>Send</button>
+        <button onClick={handleSend} disabled={loading}>
+          {loading ? "Sending..." : "Send"}
+        </button>
       </div>
     </div>
   );

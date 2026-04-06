@@ -1,7 +1,7 @@
-const OpenAI = require("openai");
+const { GoogleGenAI } = require("@google/genai");
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 function fallbackReply(message, expenses) {
@@ -44,33 +44,33 @@ function fallbackReply(message, expenses) {
       : "You have no recent expenses.";
   }
 
-  if (text.includes("save") || text.includes("saving")) {
-    return `Your highest spending category is ${topCategory}. Reducing that category may help you save more.`;
-  }
-
   return "I can help with total spending, highest category, recent expenses, and savings suggestions.";
 }
 
 async function generateChatReply(message, expenses) {
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a personal finance assistant. Answer in short, clear, simple language based on the user's expenses.",
-        },
-        {
-          role: "user",
-          content: `User question: ${message}\nUser expenses: ${JSON.stringify(expenses)}`,
-        },
-      ],
+    const prompt = `
+You are a personal finance assistant.
+Reply in short, simple language.
+Answer only from the given expenses data.
+Question: ${message}
+Expenses: ${JSON.stringify(expenses)}
+`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
     });
 
-    return response.choices[0].message.content.trim();
+    const reply =
+      response?.text ||
+      response?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    console.log("Gemini reply:", reply);
+
+    return reply || fallbackReply(message, expenses);
   } catch (error) {
-    console.log("CHAT AGENT FALLBACK:", error.message);
+    console.log("Gemini failed:", error.message);
     return fallbackReply(message, expenses);
   }
 }
