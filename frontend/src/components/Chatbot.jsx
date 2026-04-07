@@ -21,14 +21,20 @@ function Chatbot() {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
+<<<<<<< HEAD
     const userMessage = input;
+=======
+    const userMessage = input.trim();
+
+>>>>>>> 5ee52dedc5d8449615ffbdc5bf4b509d7a7cbfdb
     setMessages((prev) => [...prev, { role: "user", text: userMessage }]);
     setInput("");
     setLoading(true);
 
     try {
+<<<<<<< HEAD
       const res = await API.post("/chat", { message: userMessage });
       const reply = res.data.data.reply;
 
@@ -37,18 +43,44 @@ function Chatbot() {
       setMessages((prev) => [
         ...prev,
         { role: "assistant", text: "⚠️ Something went wrong" },
-      ]);
-    }
+=======
+      const res = await API.post("/chat", {
+        message: userMessage,
+      });
 
-    setLoading(false);
+      // console.log("CHAT RESPONSE:", res.data);
+      // console.log("CHAT REPLY:", res.data?.data?.reply);
+
+      const reply = res.data?.data?.reply || "No response received.";
+
+      setMessages((prev) => [...prev, { role: "assistant", text: reply }]);
+    } catch (error) {
+      console.log("CHAT ERROR:", error);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          text: "Sorry, something went wrong.",
+        },
+>>>>>>> 5ee52dedc5d8449615ffbdc5bf4b509d7a7cbfdb
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen bg-[#eef2ff] lg:flex">
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
+=======
+    <div className="card chatbot-card">
+      <h3>Chat Support</h3>
+>>>>>>> 5ee52dedc5d8449615ffbdc5bf4b509d7a7cbfdb
 
       <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8">
         <Navbar onMenuClick={() => setSidebarOpen(true)} />
@@ -113,8 +145,31 @@ function Chatbot() {
               </div>
             </div>
           </div>
+<<<<<<< HEAD
         </div>
       </main>
+=======
+        ))}
+
+        {loading && <div className="chat-message bot-msg">Typing...</div>}
+      </div>
+
+      <div className="chat-input-area">
+        <input
+          type="text"
+          placeholder="Ask about your expenses..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSend();
+          }}
+        />
+
+        <button onClick={handleSend} disabled={loading}>
+          {loading ? "Sending..." : "Send"}
+        </button>
+      </div>
+>>>>>>> 5ee52dedc5d8449615ffbdc5bf4b509d7a7cbfdb
     </div>
   );
 }
