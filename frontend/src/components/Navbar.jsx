@@ -1,28 +1,35 @@
-import { useNavigate } from "react-router-dom";
+import { FaBars, FaBell } from "react-icons/fa";
 
-function Navbar() {
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/");
-  };
-
+function Navbar({ onMenuClick }) {
   return (
-    <nav className="navbar">
-      <div className="navbar-left">
-        <h3>AI Expense Tracker</h3>
-      </div>
+    <header className="mb-6 rounded-[24px] border border-white/20 bg-white/50 px-5 py-4 shadow-lg backdrop-blur-xl backdrop-saturate-150">
+    <div className="flex items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <button
+            onClick={onMenuClick}
+            className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-600 transition hover:bg-slate-100 lg:hidden"
+          >
+            <FaBars className="text-lg" />
+          </button>
 
-      <div className="navbar-right">
-        <span className="user-name">
-          Welcome, {user?.name || "User"}
-        </span>
-        <button onClick={handleLogout}>Logout</button>
+          <div className="min-w-0">
+            <h2 className="truncate text-xl font-bold tracking-tight text-slate-800 sm:text-2xl">
+              Welcome back 
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Track, manage and understand your expenses smartly
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-600 transition hover:bg-slate-100">
+            <FaBell className="text-base" />
+            <span className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white"></span>
+          </button>
+        </div>
       </div>
-    </nav>
+    </header>
   );
 }
 

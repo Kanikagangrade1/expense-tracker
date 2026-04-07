@@ -98,48 +98,43 @@ function ExpenseForm({ onAdd, onReminderAdd }) {
     }
   };
 
-  return (
-    <div className="card">
-      <h3>Add Entry</h3>
+return (
+  <div className="bg-white/75 backdrop-blur-xl rounded-[28px] p-6 shadow-xl border border-white/40">
+    <h3 className="text-2xl font-bold text-slate-800 mb-2">Add Entry</h3>
+    <p className="text-slate-500 mb-5">Add your income or expense here</p>
 
-      <form onSubmit={handleSubmit}>
-        <select
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Title</option>
-          {titleOptions.map((item, index) => (
-            <option key={index} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <select
+        name="title"
+        value={form.title}
+        onChange={handleChange}
+        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-700 outline-none"
+      >
+        <option value="">Select Title</option>
+        {titleOptions.map((item, index) => (
+          <option key={index} value={item}>
+            {item}
+          </option>
+        ))}
+      </select>
 
-        <input
-          type="text"
-          name="category"
-          value={form.category}
-          placeholder="Category"
-          readOnly
-        />
+      <input
+        type="text"
+        name="category"
+        value={form.category}
+        readOnly
+        placeholder="Category"
+        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700"
+      />
 
-        <input
-          type="text"
-          name="type"
-          value={form.type}
-          placeholder="Type"
-          readOnly
-        />
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input
           type="number"
           name="amount"
           placeholder="Amount"
           value={form.amount}
           onChange={handleChange}
-          required
+          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-700 outline-none"
         />
 
         <input
@@ -147,28 +142,58 @@ function ExpenseForm({ onAdd, onReminderAdd }) {
           name="date"
           value={form.date}
           onChange={handleChange}
-          required
+          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-700 outline-none"
         />
+      </div>
 
-        {form.category === "Bills" && (
-          <label className="reminder-checkbox">
-            <input
-              type="checkbox"
-              name="setReminder"
-              checked={form.setReminder}
-              onChange={handleChange}
-            />
-            Set Reminder
-          </label>
-        )}
+      <div className="flex gap-3">
+        <button
+          type="button"
+          className={`rounded-2xl px-5 py-3 font-semibold ${
+            form.type === "Credit"
+              ? "bg-green-500 text-white"
+              : "bg-slate-100 text-slate-600"
+          }`}
+        >
+          Credit
+        </button>
 
-        {error && <p className="error">{error}</p>}
-        {success && <p style={{ color: "green", marginBottom: "10px" }}>{success}</p>}
+        <button
+          type="button"
+          className={`rounded-2xl px-5 py-3 font-semibold ${
+            form.type === "Debit"
+              ? "bg-red-500 text-white"
+              : "bg-slate-100 text-slate-600"
+          }`}
+        >
+          Debit
+        </button>
+      </div>
 
-        <button type="submit">Add Entry</button>
-      </form>
-    </div>
-  );
+      {form.category === "Bills" && (
+        <label className="flex items-center gap-2 text-slate-600">
+          <input
+            type="checkbox"
+            name="setReminder"
+            checked={form.setReminder}
+            onChange={handleChange}
+          />
+          Set Reminder
+        </label>
+      )}
+
+      {error && <p className="text-sm text-red-500">{error}</p>}
+      {success && <p className="text-sm text-green-600">{success}</p>}
+
+      <button
+        type="submit"
+        className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-500 py-3 text-lg font-semibold text-white shadow-lg"
+      >
+        Add Entry
+      </button>
+    </form>
+  </div>
+);
 }
 
 export default ExpenseForm;
