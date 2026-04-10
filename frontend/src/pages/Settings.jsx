@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { FaUser, FaLock, FaSave } from "react-icons/fa";
 import { toast } from "react-toastify";
 import API from "../services/api";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 function Settings() {
   const [form, setForm] = useState({
@@ -13,6 +15,7 @@ function Settings() {
 
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [loadingPassword, setLoadingPassword] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -44,15 +47,12 @@ function Settings() {
       });
 
       const updatedUser = res.data.data.user;
-
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
       toast.success("Name updated successfully ✅");
     } catch (error) {
       console.error("PROFILE UPDATE ERROR:", error);
-      toast.error(
-        error?.response?.data?.message || "Failed to update name"
-      );
+      toast.error(error?.response?.data?.message || "Failed to update name");
     } finally {
       setLoadingProfile(false);
     }
@@ -103,128 +103,144 @@ function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-800">Settings</h1>
-          <p className="text-slate-500 mt-2">
-            Manage your account details and password
-          </p>
-        </div>
+    <div className="min-h-screen h-screen bg-[#eef2ff] lg:flex">
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+    <div className="flex-1 flex flex-col  overflow-hidden">
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Update Name Card */}
-          <div className="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                <FaUser />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-slate-800">
-                  Update Profile
-                </h2>
-                <p className="text-sm text-slate-500">
-                  Change your display name
-                </p>
-              </div>
+<Navbar onMenuClick={() => setSidebarOpen(true)} />
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
+          <div className="absolute left-10 top-10 h-72 w-72 rounded-full bg-blue-300/20 blur-3xl" />
+          <div className="absolute bottom-10 right-10 h-72 w-72 rounded-full bg-indigo-400/20 blur-3xl" />
+
+          <div className="relative z-10 mx-auto max-w-7xl">
+            <div className="mb-8">
+              <p className="inline-flex rounded-full bg-blue-100 px-4 py-1 text-sm font-semibold text-blue-700">
+                Account Settings
+              </p>
+              <h1 className="mt-4 text-3xl font-bold text-slate-800 md:text-4xl">
+                Manage your profile and security
+              </h1>
+              <p className="mt-2 text-slate-500">
+                Update your name, change password, and keep your account secure.
+              </p>
             </div>
 
-            <form onSubmit={handleNameUpdate} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Enter your name"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-blue-400"
-                />
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="rounded-[28px] border border-white/40 bg-white/80 p-6 shadow-xl backdrop-blur-xl sm:p-8">
+                <div className="mb-6 flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-xl text-blue-600">
+                    <FaUser />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-800">
+                      Update Profile
+                    </h2>
+                    <p className="text-sm text-slate-500">
+                      Change your display name
+                    </p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleNameUpdate} className="space-y-4">
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      placeholder="Enter your name"
+                      className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loadingProfile}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70"
+                  >
+                    <FaSave />
+                    {loadingProfile ? "Updating..." : "Update Name"}
+                  </button>
+                </form>
               </div>
 
-              <button
-                type="submit"
-                disabled={loadingProfile}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition flex items-center justify-center gap-2 disabled:opacity-70"
-              >
-                <FaSave />
-                {loadingProfile ? "Updating..." : "Update Name"}
-              </button>
-            </form>
-          </div>
+              <div className="rounded-[28px] border border-white/40 bg-white/80 p-6 shadow-xl backdrop-blur-xl sm:p-8">
+                <div className="mb-6 flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-100 text-xl text-red-600">
+                    <FaLock />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-800">
+                      Change Password
+                    </h2>
+                    <p className="text-sm text-slate-500">
+                      Keep your account secure
+                    </p>
+                  </div>
+                </div>
 
-          {/* Update Password Card */}
-          <div className="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-11 h-11 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                <FaLock />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-slate-800">
-                  Change Password
-                </h2>
-                <p className="text-sm text-slate-500">
-                  Keep your account secure
-                </p>
+                <form onSubmit={handlePasswordUpdate} className="space-y-4">
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                      Current Password
+                    </label>
+                    <input
+                      type="password"
+                      name="currentPassword"
+                      value={form.currentPassword}
+                      onChange={handleChange}
+                      placeholder="Enter current password"
+                      className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      name="newPassword"
+                      value={form.newPassword}
+                      onChange={handleChange}
+                      placeholder="Enter new password"
+                      className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      placeholder="Confirm new password"
+                      className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loadingPassword}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 py-3 font-semibold text-white transition hover:bg-red-700 disabled:opacity-70"
+                  >
+                    <FaSave />
+                    {loadingPassword ? "Updating..." : "Update Password"}
+                  </button>
+                </form>
               </div>
             </div>
-
-            <form onSubmit={handlePasswordUpdate} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Current Password
-                </label>
-                <input
-                  type="password"
-                  name="currentPassword"
-                  value={form.currentPassword}
-                  onChange={handleChange}
-                  placeholder="Enter current password"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-red-400"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  name="newPassword"
-                  value={form.newPassword}
-                  onChange={handleChange}
-                  placeholder="Enter new password"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-red-400"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Confirm New Password
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm new password"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-red-400"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loadingPassword}
-                className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-semibold transition flex items-center justify-center gap-2 disabled:opacity-70"
-              >
-                <FaSave />
-                {loadingPassword ? "Updating..." : "Update Password"}
-              </button>
-            </form>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

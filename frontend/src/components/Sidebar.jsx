@@ -50,7 +50,7 @@ function Sidebar({ isOpen, onClose }) {
         <div>
           <div className="mb-8 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-blue-600 to-indigo-600 text-white shadow-md">
                 <FaWallet className="text-lg" />
               </div>
 
@@ -106,7 +106,7 @@ function Sidebar({ isOpen, onClose }) {
         </div>
 
         <div className="mt-6 space-y-4">
-          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 p-4 shadow-sm">
+          <div className="rounded-3xl border border-slate-200 bg-linear-to-br from-slate-50 to-slate-100 p-4 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm">
                 <FaUserCircle className="text-3xl text-blue-600" />
@@ -134,7 +134,7 @@ function Sidebar({ isOpen, onClose }) {
       </aside>
 
       {showLogoutModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
           <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
             <h2 className="text-xl font-bold text-slate-800">Confirm Logout</h2>
             <p className="mt-2 text-sm text-slate-500">

@@ -94,7 +94,7 @@ function ExpenseList({ expenses = [], onDelete, onUpdate }) {
 
   return (
     <div className="rounded-[28px] border border-white/40 bg-white/75 p-6 shadow-xl backdrop-blur-xl">
-      <h3 className="mb-4 text-2xl font-bold text-slate-800">Expense List</h3>
+      <h3 className="mb-4 text-2xl font-bold text-slate-800 justify-center flex ">Recent Expenses</h3>
 
       <div className="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
         <select
@@ -227,7 +227,7 @@ function ExpenseList({ expenses = [], onDelete, onUpdate }) {
                     </>
                   ) : (
                     <>
-                      <td className="py-3 font-medium text-slate-700">{item.title}</td>
+                      <td className="py-3 font-medium text-slate-700 ">{item.title}</td>
                       <td className="py-3 text-slate-700">{item.category}</td>
                       <td className="py-3 text-slate-700">₹{item.amount}</td>
                       <td className="py-3">

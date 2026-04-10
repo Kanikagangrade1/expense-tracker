@@ -218,7 +218,7 @@ function ExpenseChart() {
                 ) : (
                   <>
                     <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-2">
-                      <div className="w-full h-[240px]  min-h-[240px] min-w-0">
+                      <div className="w-full h-60  min-h-60 min-w-0">
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
                             <Pie
@@ -318,7 +318,7 @@ function ExpenseChart() {
                   </select>
                 </div>
 
-                <div className="h-[260px] w-full min-h-65">
+                <div className="h-65 w-full min-h-65">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={monthlyData}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -371,7 +371,7 @@ function ExpenseChart() {
               </div>
             </div>
 
-            <div className="mt-4 rounded-2xl border border-amber-100 bg-gradient-to-r from-amber-50 to-white p-5 shadow-sm">
+            <div className="mt-4 rounded-2xl border border-amber-100 bg-linear-to-r from-amber-50 to-white p-5 shadow-sm">
               <h3 className="flex items-center gap-2 text-2xl font-bold text-slate-800">
                 <span>💡</span>
                 Smart Insights

@@ -187,7 +187,7 @@ return (
 
       <button
         type="submit"
-        className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-500 py-3 text-lg font-semibold text-white shadow-lg"
+        className="w-full rounded-2xl bg-linear-to-r from-blue-600 to-indigo-500 py-3 text-lg font-semibold text-white shadow-lg"
       >
         Add Entry
       </button>

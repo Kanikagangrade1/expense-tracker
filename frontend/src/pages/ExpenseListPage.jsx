@@ -34,20 +34,19 @@ function ExpenseListPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#eef2ff] lg:flex">
+    <div className="min-h-screen h-screen bg-[#eef2ff] lg:flex">
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
+    <div className="flex-1 flex flex-col  overflow-hidden">
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar onMenuClick={() => setSidebarOpen(true)} />
-
-        <main className="min-w-0 flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-          <div className="mx-auto max-w-7xl">
+<Navbar onMenuClick={() => setSidebarOpen(true)} />
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
+         <div className="mx-auto max-w-7xl">
             <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-xl sm:p-6">
               <h2 className="mb-4 text-2xl font-bold text-slate-800">
-                Expense List
+                {/* Expense List */}
               </h2>
 
               <ExpenseList

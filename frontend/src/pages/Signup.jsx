@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../services/api";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 function Signup() {
   const [form, setForm] = useState({
@@ -33,7 +35,18 @@ function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-100 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 via-white to-indigo-100 relative overflow-hidden">
+
+ <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+    <div className="flex-1 flex flex-col  overflow-hidden">
+
+<Navbar onMenuClick={() => setSidebarOpen(true)} />
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
+        
+
 
       {/* Background Blur Shapes */}
       <div className="absolute w-72 h-72 bg-blue-300/30 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
@@ -108,6 +121,9 @@ function Signup() {
           </Link>
         </p>
       </form>
+    
+      </main>
+      </div>
     </div>
   );
 }
