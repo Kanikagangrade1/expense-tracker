@@ -12,7 +12,7 @@ function AddExpense() {
     category: "",
     amount: "",
     date: "",
-    type: "Credit",
+    type: "Debit",
   });
 
   const handleChange = (e) => {
@@ -43,18 +43,20 @@ function AddExpense() {
   };
 
   return (
-    <div className="min-h-screen bg-[#eef2ff] lg:flex">
+    <div className="min-h-screen h-screen bg-[#eef2ff] lg:flex">
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
 
-      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8">
+      <div className="flex-1 flex flex-col  overflow-hidden">
         <Navbar onMenuClick={() => setSidebarOpen(true)} />
 
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto ">
+        
         <div className="mt-6">
           <div className="mx-auto w-full max-w-3xl rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-xl sm:p-6 md:p-8">
-            <h2 className="text-3xl font-bold text-slate-800">Add Entry</h2>
+            <h2 className="text-2xl font-bold text-slate-800">Add Entry</h2>
             <p className="mt-2 text-slate-500">
               Add your income or expense here
             </p>
@@ -129,19 +131,21 @@ function AddExpense() {
                 </button>
               </div>
 
-              <button
-                type="submit"
-                className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-500 px-6 py-4 text-lg font-semibold text-white shadow-md transition hover:opacity-95"
-              >
-                Add Entry
-              </button>
+              <div className="flex justify-center mt-4">
+  <button
+    type="submit"
+    className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition"
+  >
+    Add Entry
+  </button>
+</div>
             </form>
           </div>
         </div>
         
         <ToastContainer position="top-right" autoClose={2000} theme="colored" />
       </main>
-    </div>
+    </div></div>
     
   );
   

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaChartPie,
@@ -10,14 +11,18 @@ import {
   FaUserCircle,
   FaWallet,
 } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    toast.success("Logged out successfully 👋");
+    setShowLogoutModal(false);
     navigate("/");
   };
 
@@ -38,7 +43,7 @@ function Sidebar({ isOpen, onClose }) {
       )}
 
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-screen w-72 flex-col border-r border-slate-200 bg-white px-5 py-5 shadow-2xl transition-transform duration-300 lg:static lg:z-0 lg:w-72 lg:translate-x-0 ${
+        className={`fixed left-0 top-0 z-50 flex h-screen w-72 flex-col justify-between border-r border-slate-200 bg-white px-5 py-5 shadow-2xl transition-transform duration-300 lg:static lg:z-0 lg:w-72 lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -53,7 +58,9 @@ function Sidebar({ isOpen, onClose }) {
                 <h1 className="text-lg font-bold leading-tight text-slate-800">
                   Expense Tracker
                 </h1>
-                <p className="text-xs text-slate-500">Personal finance dashboard</p>
+                <p className="text-xs text-slate-500">
+                  Personal finance dashboard
+                </p>
               </div>
             </div>
 
@@ -76,6 +83,11 @@ function Sidebar({ isOpen, onClose }) {
               <span>Add Expense</span>
             </NavLink>
 
+            <NavLink to="/expenses" className={navLinkClass} onClick={onClose}>
+              <FaWallet className="text-base" />
+              <span>Expenses</span>
+            </NavLink>
+
             <NavLink to="/chart" className={navLinkClass} onClick={onClose}>
               <FaChartPie className="text-base" />
               <span>Analytics</span>
@@ -86,10 +98,10 @@ function Sidebar({ isOpen, onClose }) {
               <span>Chat Support</span>
             </NavLink>
 
-            <button className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+            <NavLink to="/settings" className={navLinkClass} onClick={onClose}>
               <FaCog className="text-base" />
               <span>Settings</span>
-            </button>
+            </NavLink>
           </nav>
         </div>
 
@@ -112,7 +124,7 @@ function Sidebar({ isOpen, onClose }) {
           </div>
 
           <button
-            onClick={handleLogout}
+            onClick={() => setShowLogoutModal(true)}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-rose-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-600"
           >
             <FaSignOutAlt />
@@ -120,6 +132,33 @@ function Sidebar({ isOpen, onClose }) {
           </button>
         </div>
       </aside>
+
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
+            <h2 className="text-xl font-bold text-slate-800">Confirm Logout</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              Are you sure you want to logout from your account?
+            </p>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 rounded-2xl border border-slate-300 px-4 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="flex-1 rounded-2xl bg-rose-500 px-4 py-3 font-medium text-white transition hover:bg-rose-600"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

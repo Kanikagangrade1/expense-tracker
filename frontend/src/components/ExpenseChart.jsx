@@ -35,6 +35,40 @@ function ExpenseChart() {
     fetchExpenses();
   }, []);
 
+  const normalizeCategory = (category) => {
+    if (!category || typeof category !== "string") return "Other";
+
+    const value = category.trim().toLowerCase();
+
+    const categoryMap = {
+      food: "Food",
+      travel: "Travel",
+      shopping: "Shopping",
+      bills: "Bills",
+      bill: "Bills",
+      "bill 1": "Bills",
+      electricity: "Bills",
+      "electricity bill": "Bills",
+      recharge: "Bills",
+      "mobile recharge": "Bills",
+      wifi: "Bills",
+      "wifi recharge": "Bills",
+      rent: "Bills",
+      "house rent": "Bills",
+      entertainment: "Entertainment",
+      netflix: "Entertainment",
+      "netflix subscription": "Entertainment",
+      health: "Health",
+      medical: "Health",
+      income: "Income",
+      salary: "Income",
+      credit: "Income",
+      other: "Other",
+    };
+
+    return categoryMap[value] || "Other";
+  };
+
   const getColor = (category) => {
     switch (category) {
       case "Food":
@@ -59,34 +93,37 @@ function ExpenseChart() {
   };
 
   const chartData = useMemo(() => {
-  return expenses
-    .filter((expense) => expense.category !== "Income")
-    .reduce((acc, expense) => {
-      const category = expense.category || "Other";
-      const existing = acc.find((item) => item.category === category);
+    return expenses
+      .filter((expense) => normalizeCategory(expense.category) !== "Income")
+      .reduce((acc, expense) => {
+        const category = normalizeCategory(expense.category);
+        const amount = Number(expense.amount || 0);
 
-      if (existing) {
-        existing.amount += Number(expense.amount || 0);
-      } else {
-        acc.push({
-          category,
-          amount: Number(expense.amount || 0),
-        });
-      }
+        const existing = acc.find((item) => item.category === category);
 
-      return acc;
-    }, []);
-}, [expenses]);
+        if (existing) {
+          existing.amount += amount;
+        } else {
+          acc.push({
+            category,
+            amount,
+          });
+        }
+
+        return acc;
+      }, [])
+      .sort((a, b) => b.amount - a.amount);
+  }, [expenses]);
 
   const totalExpense = useMemo(() => {
     return expenses
-      .filter((item) => item.category !== "Income")
+      .filter((item) => normalizeCategory(item.category) !== "Income")
       .reduce((sum, item) => sum + Number(item.amount || 0), 0);
   }, [expenses]);
 
   const totalIncome = useMemo(() => {
     return expenses
-      .filter((item) => item.category === "Income")
+      .filter((item) => normalizeCategory(item.category) === "Income")
       .reduce((sum, item) => sum + Number(item.amount || 0), 0);
   }, [expenses]);
 
@@ -114,10 +151,11 @@ function ExpenseChart() {
       const date = new Date(item.date);
       const month = date.toLocaleString("en-US", { month: "short" });
       const amount = Number(item.amount || 0);
+      const category = normalizeCategory(item.category);
 
       if (!monthsMap[month]) return;
 
-      if (item.category === "Income") {
+      if (category === "Income") {
         monthsMap[month].income += amount;
       } else {
         monthsMap[month].expense += amount;
@@ -128,22 +166,24 @@ function ExpenseChart() {
   }, [expenses]);
 
   const topCategory = useMemo(() => {
-    const filtered = chartData.filter((item) => item.category !== "Income");
-    if (filtered.length === 0) return null;
-    return filtered.reduce((max, item) =>
+    if (chartData.length === 0) return null;
+    return chartData.reduce((max, item) =>
       item.amount > max.amount ? item : max
     );
   }, [chartData]);
 
-  return (
-    <div className="min-h-screen bg-[#eef2ff] lg:flex">
-      <Sidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+  const totalChartAmount = useMemo(() => {
+    return chartData.reduce((sum, item) => sum + item.amount, 0);
+  }, [chartData]);
 
-      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8">
-        <Navbar onMenuClick={() => setSidebarOpen(true)} />
+  return (
+    <div className="min-h-screen h-screen bg-[#eef2ff] lg:flex">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+<div className="flex-1 flex flex-col  overflow-hidden">
+
+<Navbar onMenuClick={() => setSidebarOpen(true)} />
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8 h-full overflow-y-auto">
+        {/* <Navbar onMenuClick={() => setSidebarOpen(true)} /> */}
 
         <div className="mt-4">
           <div className="rounded-2xl border border-white/40 bg-white/60 p-5 shadow-md backdrop-blur-md">
@@ -178,7 +218,7 @@ function ExpenseChart() {
                 ) : (
                   <>
                     <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-2">
-                      <div className="h-[240px] w-full">
+                      <div className="w-full h-[240px]  min-h-[240px] min-w-0">
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
                             <Pie
@@ -205,13 +245,9 @@ function ExpenseChart() {
 
                       <div className="space-y-4">
                         {chartData.map((item, index) => {
-                          const total = chartData.reduce(
-                            (sum, entry) => sum + entry.amount,
-                            0
-                          );
                           const percentage =
-                            total > 0
-                              ? Math.round((item.amount / total) * 100)
+                            totalChartAmount > 0
+                              ? Math.round((item.amount / totalChartAmount) * 100)
                               : 0;
 
                           return (
@@ -282,7 +318,7 @@ function ExpenseChart() {
                   </select>
                 </div>
 
-                <div className="h-[260px] w-full">
+                <div className="h-[260px] w-full min-h-65">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={monthlyData}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -364,6 +400,7 @@ function ExpenseChart() {
           </div>
         </div>
       </main>
+    </div>
     </div>
   );
 }

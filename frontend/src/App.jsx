@@ -5,6 +5,9 @@ import Dashboard from "./pages/Dashboard";
 import ExpenseChart from "./components/ExpenseChart";
 import AddExpense from "./pages/AddExpense";
 import Chatbot from "./components/Chatbot";
+import Settings from "./pages/Settings";
+import ExpenseListPage from "./pages/ExpenseListPage";
+// import ExpenseList from "./components/ExpenseListPage";
 
 function App() {
   return (
@@ -16,6 +19,8 @@ function App() {
         <Route path="/add-expense" element={<AddExpense />} />
         <Route path="/chart" element={<ExpenseChart />} />
         <Route path="/chat" element={<Chatbot />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/expenses" element={<ExpenseListPage />} />
       </Routes>
     </BrowserRouter>
   );

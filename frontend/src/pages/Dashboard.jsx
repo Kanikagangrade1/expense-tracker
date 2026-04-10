@@ -110,19 +110,21 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#eef2ff] lg:flex">
+    <div className="min-h-screen h-screen bg-[#eef2ff] lg:flex">
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
+    <div className="flex-1 flex flex-col  overflow-hidden">
 
-      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8">
-        <Navbar onMenuClick={() => setSidebarOpen(true)} />
+<Navbar onMenuClick={() => setSidebarOpen(true)} />
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
+        
 
         <div className="mt-6 space-y-6">
           <SummaryCards expenses={expenses} />
 
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 xl:grid-cols-3">
+          {/* <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 xl:grid-cols-3">
             <div className="xl:col-span-2 rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-xl sm:p-6">
               <h2 className="mb-4 text-2xl font-bold text-slate-800">
                 Recent Expenses
@@ -144,7 +146,10 @@ function Dashboard() {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
+          {/* adding analytics */}
+          
+
         </div>
 
         {showReminderModal && (
@@ -210,6 +215,7 @@ function Dashboard() {
 
         <ToastContainer position="top-right" autoClose={2000} theme="colored" />
       </main>
+    </div>
     </div>
   );
 }

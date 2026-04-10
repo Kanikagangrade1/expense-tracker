@@ -68,6 +68,10 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log("LOGIN BODY:", req.body);
+    console.log("EMAIL:", email);
+    console.log("PASSWORD:", password);
+
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -76,7 +80,8 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
+    console.log("FOUND USER:", user);
 
     if (!user) {
       return res.status(404).json({
@@ -86,7 +91,10 @@ exports.login = async (req, res) => {
       });
     }
 
+    console.log("DB PASSWORD:", user.password);
+
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log("PASSWORD MATCH:", isMatch);
 
     if (!isMatch) {
       return res.status(400).json({
@@ -115,7 +123,7 @@ exports.login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log("LOGIN ERROR:", error.message);
+    console.log("LOGIN ERROR:", error);
     res.status(500).json({
       success: false,
       message: "Server error",

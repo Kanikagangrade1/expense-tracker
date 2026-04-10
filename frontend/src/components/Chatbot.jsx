@@ -54,18 +54,17 @@ function Chatbot() {
 
   return (
 
-    <div className="min-h-screen bg-[#eef2ff] lg:flex">
+    <div className="min-h-screen h-screen bg-[#eef2ff] lg:flex">
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
 
-    <div className="card chatbot-card">
-      <h3>Chat Support</h3>
-
-
-      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8">
+    <div className="flex-1 flex flex-col  overflow-hidden">
+     
         <Navbar onMenuClick={() => setSidebarOpen(true)} />
+
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
 
         <div className="mt-6">
           <div className="mx-auto flex h-[calc(100vh-150px)] w-full max-w-5xl flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white/90 shadow-xl">

@@ -2,7 +2,7 @@ import { FaBars, FaBell } from "react-icons/fa";
 
 function Navbar({ onMenuClick }) {
   return (
-    <header className="mb-6 rounded-[24px] border border-white/20 bg-white/50 px-5 py-4 shadow-lg backdrop-blur-xl backdrop-saturate-150">
+    <header className="mb-6 rounded-lg border border-white/20 bg-white/50 p-4 shadow-lg backdrop-blur-xl backdrop-saturate-150 sticky top-0 z-10">
     <div className="flex items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <button
